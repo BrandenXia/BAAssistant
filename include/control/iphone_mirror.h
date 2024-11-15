@@ -7,11 +7,14 @@
 
 namespace Baa {
 
-class IPhoneMirrorWindow : public Window {
+class IPhoneMirrorWindow final : public Window {
     CGWindowID windowID;
+
 public:
     IPhoneMirrorWindow();
-    void click(double x, double y) final;
+    void mousedown(Point point) final;
+    void mouseup(Point point) final;
+    ~IPhoneMirrorWindow() final = default;
 };
 
 }

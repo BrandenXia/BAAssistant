@@ -8,5 +8,6 @@ int main(int argc, const char *argv[]) {
 
     Window *window = new IPhoneMirrorWindow();
 
-    window->click(70, 460);
+    window->mousedown({70, 440});
+    window->mouseup({150, 440});
 }

@@ -2,24 +2,40 @@
 
 #import <CoreGraphics/CoreGraphics.h>
 #import <Foundation/Foundation.h>
-#include <sys/types.h>
 
 #include <stdexcept>
 #include <string_view>
 
-#import "spdlog/spdlog.h"
+#include "log.h"
 
 #define ERROR(msg)                     \
     {                                  \
-        spdlog::error(msg);            \
+        LOG_ERROR(msg);                \
         throw std::runtime_error(msg); \
     }
+
+#define CALC_POINT(point, bounds) \
+    CGPointMake(bounds.origin.x + point.x, bounds.origin.y + point.y)
+#define CALC_POINT_WIN_ID(point, windowID) \
+    CALC_POINT(point, getBounds(windowID))
+#define CREATE_MOUSE_EVENT(kCGEvent, dst) \
+    CGEventCreateMouseEvent(nullptr, kCGEvent, dst, kCGMouseButtonLeft)
+#define EXEC_EVENT(kCGEvent)                                  \
+    {                                                         \
+        CGPoint dst = CALC_POINT_WIN_ID(point, windowID);     \
+        CGEventRef event = CREATE_MOUSE_EVENT(kCGEvent, dst); \
+        CGEventPost(kCGHIDEventTap, event);                   \
+        CFRelease(event);                                     \
+    }                                                         \
+    while (0)
 
 CGWindowID getWindowID(std::string_view appName);
 
 NSDictionary *getWindowInfo(CGWindowID windowID);
 
 CGSize getScreenSize(CGWindowID windowID);
+
+CGRect getBounds(CGWindowID windowID);
 
 namespace Baa {
 
@@ -29,39 +45,27 @@ IPhoneMirrorWindow::IPhoneMirrorWindow() : Window() {
     CGSize screenSize = getScreenSize(windowID);
     width = screenSize.width, height = screenSize.height;
 
-    spdlog::info("Initialized IPhoneMirrorWindow");
+    LOG_INFO("Initialized IPhoneMirrorWindow");
 }
 
-void IPhoneMirrorWindow::click(double x, double y) {
-    Window::click(x, y);
+void IPhoneMirrorWindow::mousedown(Point point) {
+    Window::mousedown(point);
 
-    @autoreleasepool {
-        auto *info = getWindowInfo(windowID);
-        CGRect bounds;
-        CGRectMakeWithDictionaryRepresentation(
-            (__bridge CFDictionaryRef)info[(NSString *)kCGWindowBounds],
-            &bounds);
+    @autoreleasepool
+    EXEC_EVENT(kCGEventLeftMouseDown);
+}
 
-        CGPoint point = CGPointMake(bounds.origin.x + x,
-                                    bounds.origin.y + y);
+void IPhoneMirrorWindow::mouseup(Point point) {
+    Window::mouseup(point);
 
-        CGEventRef down = CGEventCreateMouseEvent(
-            nullptr, kCGEventLeftMouseDown, point, kCGMouseButtonLeft);
-        CGEventRef up = CGEventCreateMouseEvent(
-            nullptr, kCGEventLeftMouseUp, point, kCGMouseButtonLeft);
-
-        CGEventPost(kCGHIDEventTap, down);
-        CGEventPost(kCGHIDEventTap, up);
-
-        CFRelease(down);
-        CFRelease(up);
-    }
+    @autoreleasepool
+    EXEC_EVENT(kCGEventLeftMouseUp);
 }
 
 }
 
 CGWindowID getWindowID(std::string_view appName) {
-    spdlog::info("Getting window ID for {}", appName);
+    LOG_INFO("Getting window ID for {}", appName);
 
     CGWindowID windowID = 0;
 
@@ -84,7 +88,7 @@ CGWindowID getWindowID(std::string_view appName) {
     }
 
     if (windowID == 0) ERROR("Failed to get window ID for iPhone Mirroring");
-    spdlog::debug("Window ID: {}", windowID);
+    LOG_DEBUG("Window ID: {}", windowID);
 
     return windowID;
 }
@@ -115,7 +119,18 @@ CGSize getScreenSize(CGWindowID windowID) {
 
     if (CGRectIsEmpty(bounds))
         ERROR("Failed to get screen size for iPhone Mirroring");
-    spdlog::debug("Screen size: {}x{}", bounds.size.width, bounds.size.height);
+    LOG_DEBUG("Screen size: {}x{}", bounds.size.width, bounds.size.height);
 
     return bounds.size;
+}
+
+CGRect getBounds(CGWindowID windowID) {
+    CGRect bounds;
+
+    auto *info = getWindowInfo(windowID);
+
+    CGRectMakeWithDictionaryRepresentation(
+        (__bridge CFDictionaryRef)info[(NSString *)kCGWindowBounds], &bounds);
+
+    return bounds;
 }

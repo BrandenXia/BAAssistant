@@ -3,21 +3,22 @@
 
 #include <cassert>
 
-#include "spdlog/spdlog.h"
+#include "log.h"
 
 namespace Baa {
 
+struct Point {
+    double x, y;
+};
+
 class Window {
 protected:
-    Window() { spdlog::info("Initializing IPhoneMirrorWindow"); };
+    Window();
     double height{}, width{};
 
 public:
-    virtual void click(double x, double y) {
-        assert(x <= width && y <= height);
-        spdlog::info("Clicking at ({}, {})", x, y);
-    };
-
+    virtual void mousedown(Point point);
+    virtual void mouseup(Point point);
     virtual ~Window() = default;
 };
 }
