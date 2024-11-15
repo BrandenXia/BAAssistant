@@ -1,0 +1,10 @@
+{
+  "name": "baa",
+  "version": "0.0.1",
+  "dependencies": [
+    {
+      "name": "spdlog",
+      "version>=": "1.15.0"
+    }
+  ]
+}
