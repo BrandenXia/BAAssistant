@@ -8,7 +8,7 @@
 #include "spdlog/spdlog.h"
 
 namespace Baa {
-    void initLog();
+void initLog();
 }
 
 #ifdef DEBUG

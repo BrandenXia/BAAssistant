@@ -1,9 +1,14 @@
 #ifndef BAASSISTANT_IPHONE_MIRROR_H
 #define BAASSISTANT_IPHONE_MIRROR_H
 
-#include "control/window.h"
-
 #import <CoreGraphics/CoreGraphics.h>
+#ifdef NO  // workaround for conflict with NO macro in objc and opencv
+#undef NO
+#endif
+
+#include <opencv2/opencv.hpp>
+
+#include "control/window.h"
 
 namespace Baa {
 
