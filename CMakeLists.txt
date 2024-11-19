@@ -10,12 +10,16 @@ file(GLOB_RECURSE SOURCES "src/*.cpp" "src/*.mm")
 add_executable(BAAssistant ${SOURCES})
 
 find_package(spdlog CONFIG REQUIRED)
+find_package(OpenCV REQUIRED)
 
 target_link_libraries(BAAssistant
         PRIVATE spdlog::spdlog
+        PRIVATE ${OpenCV_LIBS}
 
         "-framework Foundation"
         "-framework CoreGraphics"
+        "-framework AppKit"
+        "-framework ScreenCaptureKit"
 )
 target_compile_definitions(BAAssistant
         PRIVATE $<$<CONFIG:Debug>:DEBUG>

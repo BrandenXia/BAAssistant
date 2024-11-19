@@ -2,6 +2,7 @@
 #define BAASSISTANT_WINDOW_H
 
 #include <cassert>
+#include <opencv2/opencv.hpp>
 
 #include "log.h"
 
@@ -17,9 +18,10 @@ protected:
     double height{}, width{};
 
 public:
-    virtual void mousedown(Point point);
-    virtual void mouseup(Point point);
     virtual ~Window() = default;
+    virtual void mouseup(Point point);
+    virtual void mousedown(Point point);
+    virtual void getImg(cv::Mat &img);
 };
 }
 

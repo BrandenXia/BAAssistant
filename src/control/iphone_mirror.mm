@@ -2,6 +2,8 @@
 
 #import <CoreGraphics/CoreGraphics.h>
 #import <Foundation/Foundation.h>
+#import <ScreenCaptureKit/ScreenCaptureKit.h>
+#include <opencv2/imgcodecs/macosx.h>
 
 #include <stdexcept>
 #include <string_view>
@@ -13,6 +15,7 @@
         LOG_ERROR(msg);                \
         throw std::runtime_error(msg); \
     }
+#define IMG_ERROR_MSG "Failed to get image for iPhone Mirroring"
 
 #define CALC_POINT(point, bounds) \
     CGPointMake(bounds.origin.x + point.x, bounds.origin.y + point.y)
@@ -60,6 +63,59 @@ void IPhoneMirrorWindow::mouseup(Point point) {
 
     @autoreleasepool
     EXEC_EVENT(kCGEventLeftMouseUp);
+}
+
+void IPhoneMirrorWindow::getImg(cv::Mat &img) {
+    Window::getImg(img);
+
+    @autoreleasepool {
+        dispatch_semaphore_t s = dispatch_semaphore_create(0);
+
+        [SCShareableContent getShareableContentWithCompletionHandler:^(
+                                SCShareableContent *content, NSError *error) {
+            if (error) ERROR(IMG_ERROR_MSG);
+
+            NSArray *windows = content.windows;
+            // clang-format off
+            NSUInteger index = [windows indexOfObjectPassingTest:^BOOL(
+                SCWindow *window, NSUInteger idx, BOOL *stop) {
+                return window.windowID == windowID;
+            }];
+            // clang-format on
+            if (index == NSNotFound) ERROR(IMG_ERROR_MSG);
+            SCWindow *window = windows[index];
+
+            SCContentFilter *filter = [[SCContentFilter alloc]
+                initWithDesktopIndependentWindow:window];
+
+            SCStreamConfiguration *config =
+                [[SCStreamConfiguration alloc] init];
+            config.height =
+                static_cast<size_t>(height * filter.pointPixelScale);
+            config.width = static_cast<size_t>(width * filter.pointPixelScale);
+            config.showsCursor = NO;
+            config.showMouseClicks = NO;
+            config.ignoreShadowsSingleWindow = YES;
+            config.ignoreGlobalClipSingleWindow = YES;
+            config.captureResolution = SCCaptureResolutionBest;
+            config.includeChildWindows = NO;
+
+            [SCScreenshotManager
+                captureImageWithFilter:filter
+                         configuration:config
+                     completionHandler:^(CGImageRef sample_buffer,
+                                         NSError *error2) {
+                         if (error2) ERROR(IMG_ERROR_MSG);
+                         CGImageToMat(sample_buffer, img);
+                         cv::cvtColor(img, img, cv::COLOR_BGR2RGB);
+                         dispatch_semaphore_signal(s);
+                     }];
+        }];
+
+        dispatch_semaphore_wait(s, DISPATCH_TIME_FOREVER);
+    }
+
+    LOG_DEBUG("Got image for iPhone Mirroring");
 }
 
 }

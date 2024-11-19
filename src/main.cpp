@@ -6,8 +6,11 @@ int main(int argc, const char *argv[]) {
 
     initLog();
 
-    Window *window = new IPhoneMirrorWindow();
+    cv::Mat img;
 
-    window->mousedown({70, 440});
-    window->mouseup({150, 440});
+    Window *window = new IPhoneMirrorWindow();
+    window->getImg(img);
+
+    cv::imshow("Image", img);
+    cv::waitKey(0);
 }
