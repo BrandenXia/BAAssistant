@@ -18,7 +18,6 @@ target_link_libraries(BAAssistant
 
         "-framework Foundation"
         "-framework CoreGraphics"
-        "-framework AppKit"
         "-framework ScreenCaptureKit"
 )
 target_compile_definitions(BAAssistant
