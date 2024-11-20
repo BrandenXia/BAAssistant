@@ -4,6 +4,7 @@
 #include <cassert>
 #include <opencv2/opencv.hpp>
 
+#include "frame.h"
 #include "log.h"
 
 namespace Baa {
@@ -21,7 +22,7 @@ public:
     virtual ~Window() = default;
     virtual void mouseup(Point point);
     virtual void mousedown(Point point);
-    virtual void getImg(cv::Mat &img);
+    virtual Frame getCurrentFrame() = 0;
 };
 }
 

@@ -6,9 +6,8 @@
 #undef NO
 #endif
 
-#include <opencv2/opencv.hpp>
-
 #include "control/window.h"
+#include "frame.h"
 
 namespace Baa {
 
@@ -20,7 +19,7 @@ public:
     ~IPhoneMirrorWindow() final = default;
     void mouseup(Point point) final;
     void mousedown(Point point) final;
-    void getImg(cv::Mat &img) final;
+    Frame getCurrentFrame() final;
 };
 
 }

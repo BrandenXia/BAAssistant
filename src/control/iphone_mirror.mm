@@ -1,9 +1,11 @@
 #include "control/iphone_mirror.h"
 
 #import <CoreGraphics/CoreGraphics.h>
+#ifdef NO  // workaround for conflict with NO macro in objc and opencv
+#undef NO
+#endif
 #import <Foundation/Foundation.h>
 #import <ScreenCaptureKit/ScreenCaptureKit.h>
-#include <opencv2/imgcodecs/macosx.h>
 
 #include <stdexcept>
 #include <string_view>
@@ -65,8 +67,8 @@ void IPhoneMirrorWindow::mouseup(Point point) {
     EXEC_EVENT(kCGEventLeftMouseUp);
 }
 
-void IPhoneMirrorWindow::getImg(cv::Mat &img) {
-    Window::getImg(img);
+Frame IPhoneMirrorWindow::getCurrentFrame() {
+    __block Frame *frame = nullptr;
 
     @autoreleasepool {
         dispatch_semaphore_t s = dispatch_semaphore_create(0);
@@ -106,8 +108,7 @@ void IPhoneMirrorWindow::getImg(cv::Mat &img) {
                      completionHandler:^(CGImageRef sample_buffer,
                                          NSError *error2) {
                          if (error2) ERROR(IMG_ERROR_MSG);
-                         CGImageToMat(sample_buffer, img);
-                         cv::cvtColor(img, img, cv::COLOR_BGR2RGB);
+                         frame = new Frame(sample_buffer);
                          dispatch_semaphore_signal(s);
                      }];
         }];
@@ -116,6 +117,7 @@ void IPhoneMirrorWindow::getImg(cv::Mat &img) {
     }
 
     LOG_DEBUG("Got image for iPhone Mirroring");
+    return *frame;
 }
 
 }

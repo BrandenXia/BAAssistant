@@ -20,6 +20,4 @@ void Window::mouseup(Baa::Point point) {
     LOG_INFO("Mouse up at {}", point);
 };
 
-void Window::getImg(cv::Mat &img) { LOG_INFO("Getting image"); };
-
 }
