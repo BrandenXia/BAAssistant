@@ -67,7 +67,7 @@ void IPhoneMirrorWindow::mouseup(Point point) {
     EXEC_EVENT(kCGEventLeftMouseUp);
 }
 
-Frame IPhoneMirrorWindow::getCurrentFrame() {
+Frame IPhoneMirrorWindow::getFrame() {
     __block Frame *frame = nullptr;
 
     @autoreleasepool {
@@ -129,10 +129,10 @@ CGWindowID getWindowID(std::string_view appName) {
 
     @autoreleasepool {
         CFArrayRef windows = CGWindowListCopyWindowInfo(
-            kCGWindowListOptionOnScreenOnly, kCGNullWindowID);
+            kCGWindowListExcludeDesktopElements, kCGNullWindowID);
 
         for (NSDictionary *window in (__bridge NSArray *)windows) {
-            NSString *windowAppName = window[(NSString *)kCGWindowOwnerName];
+            NSString *windowAppName = window[(NSString *)kCGWindowName];
 
             if ([windowAppName
                     isEqualToString:[NSString

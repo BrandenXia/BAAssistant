@@ -1,12 +1,10 @@
 #include "frame.h"
 
-#include <opencv2/imgcodecs/macosx.h>
+#include <opencv4/opencv2/imgcodecs/macosx.h>
 
 namespace Baa {
 
-Frame::Frame(
-    const RawImage &raw,
-    const Timestamp &timestamp)
+Frame::Frame(const RawImage &raw, const Timestamp &timestamp)
     : raw(std::make_shared<RawImage>(raw)), timestamp(timestamp) {}
 
 Frame::Frame(const RawImage &mat)

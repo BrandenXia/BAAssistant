@@ -2,7 +2,7 @@
 #define BAASSISTANT_WINDOW_H
 
 #include <cassert>
-#include <opencv2/opencv.hpp>
+#include <opencv4/opencv2/opencv.hpp>
 
 #include "frame.h"
 #include "log.h"
@@ -22,7 +22,7 @@ public:
     virtual ~Window() = default;
     virtual void mouseup(Point point);
     virtual void mousedown(Point point);
-    virtual Frame getCurrentFrame() = 0;
+    virtual Frame getFrame() = 0;
 };
 }
 

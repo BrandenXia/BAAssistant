@@ -19,7 +19,7 @@ public:
     ~IPhoneMirrorWindow() final = default;
     void mouseup(Point point) final;
     void mousedown(Point point) final;
-    Frame getCurrentFrame() final;
+    Frame getFrame() final;
 };
 
 }

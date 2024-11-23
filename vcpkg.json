@@ -1,6 +1,7 @@
 {
   "name": "baa",
   "version": "0.0.1",
+  "builtin-baseline": "772f784ba8d1add92420bd6b81d4cd6a91fb36ac",
   "dependencies": [
     {
       "name": "spdlog",
@@ -8,7 +9,8 @@
     },
     {
       "name": "opencv4",
-      "version>=": "4.10.0"
+      "version>=": "4.10.0",
+      "features": ["default-features"]
     }
   ]
 }
