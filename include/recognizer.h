@@ -22,8 +22,14 @@ struct TemplateMatching {
     explicit TemplateMatching(cv::Mat &&img);
 
     template<typename... Args>
+        requires(std::convertible_to<std::decay_t<Args>, std::string> && ...)
     explicit TemplateMatching(Args &&...args)
         : templateImage(cv::imread(std::forward<Args>(args)...)) {}
+
+    template<typename... Args>
+        requires std::is_constructible_v<cv::Mat, std::decay_t<Args>...>
+    explicit TemplateMatching(Args &&...args)
+        : templateImage(std::forward<Args>(args)...) {}
 };
 
 using Types = std::variant<TemplateMatching>;
