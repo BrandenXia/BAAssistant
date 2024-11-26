@@ -1,15 +1,19 @@
 {
-  "name" : "baa",
-  "version" : "0.0.1",
-  "builtin-baseline" : "772f784ba8d1add92420bd6b81d4cd6a91fb36ac",
-  "dependencies" : [ {
-    "name" : "spdlog",
-    "version>=" : "1.15.0"
-  }, {
-    "name" : "opencv4",
-    "version>=" : "4.10.0"
-  }, {
-    "name" : "boost-function",
-    "version>=" : "1.86.0"
-  } ]
+  "name": "baa",
+  "version": "0.0.1",
+  "builtin-baseline": "0b91cf32ea6200b85814c50c129268e8d7dafadb",
+  "dependencies": [
+    {
+      "name": "spdlog",
+      "version>=": "1.15.0"
+    },
+    {
+      "name": "opencv4",
+      "version>=": "4.10.0"
+    },
+    {
+      "name": "tesseract",
+      "version>=": "5.5.0"
+    }
+  ]
 }

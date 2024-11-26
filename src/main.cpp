@@ -1,3 +1,5 @@
+#include <iostream>
+
 #include "control/iphone_mirror.h"
 #include "game/blue_archive.h"
 #include "log.h"

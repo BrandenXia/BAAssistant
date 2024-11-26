@@ -2,7 +2,6 @@
 #define BAASSISTANT_WINDOW_H
 
 #include <cassert>
-#include <opencv4/opencv2/opencv.hpp>
 
 #include "frame.h"
 #include "log.h"
@@ -16,7 +15,7 @@ struct Point {
 class Window {
 protected:
     Window();
-    double height{}, width{};
+    double height, width;
 
 public:
     virtual ~Window() = default;
