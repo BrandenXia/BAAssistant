@@ -1,7 +1,6 @@
 #ifndef BAASSISTANT_RECOGNIZER_H
 #define BAASSISTANT_RECOGNIZER_H
 
-#include <boost/type_erasure/any.hpp>
 #include <type_traits>
 #include <variant>
 
@@ -37,15 +36,18 @@ struct Step {
  *     static const std::vector<Step<BA::Location>> steps = { ... };
  *     return steps;
  * }
-};
-
-return steps;
-}
  */
 template<EnumClass T>
 struct Recognizer;  // forward declaration
 
-template<EnumClass T>
+template<typename T>
+concept RecognizerEnum = EnumClass<T> && requires {
+    {
+        Baa::Recognizer::Recognizer<T>::steps()
+    } -> std::same_as<std::vector<Step<T>> const &>;
+};
+
+template<RecognizerEnum T>
 T recognize(Frame &frame) {
     auto steps = Recognizer<T>::steps();
     auto it = std::ranges::find_if(

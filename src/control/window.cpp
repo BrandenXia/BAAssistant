@@ -8,7 +8,7 @@ auto format_as(const Point &point) {
     return fmt::format("({}, {})", point.x, point.y);
 }
 
-Window::Window() { LOG_INFO("Initializing IPhoneMirrorWindow"); }
+Window::Window() : width(0), height(0) { LOG_INFO("Initializing Window"); }
 
 void Window::mousedown(Baa::Point point) {
     CHECK_BOUNDS(point);

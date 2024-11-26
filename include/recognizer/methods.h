@@ -1,8 +1,8 @@
 #ifndef BAASSISTANT_RECOGNIZER_METHODS_H
 #define BAASSISTANT_RECOGNIZER_METHODS_H
 
-#include <boost/function.hpp>
-#include <opencv4/opencv2/opencv.hpp>
+#include <functional>
+#include <opencv4/opencv2/imgcodecs.hpp>
 #include <variant>
 
 #include "frame.h"
@@ -16,8 +16,9 @@ namespace Baa::Recognizer::Methods {
 
 using MatchFuncReturn = std::vector<cv::Point>;
 
-using Base = boost::function<MatchFuncReturn(const Frame &, bool)>;
+using Base = std::function<MatchFuncReturn(const Frame &, bool)>;
 
+// templateImage should be in grayscale
 struct TemplateMatching {
     const cv::Mat templateImage;
 
@@ -31,9 +32,15 @@ struct TemplateMatching {
     explicit TemplateMatching(Args &&...args)
         : templateImage(cv::imread(std::forward<Args>(args)...)) {}
 
-    TemplateMatching(const TemplateMatching &) = default;
-    TemplateMatching(TemplateMatching &&) noexcept = default;
+    MatchFuncReturn operator()(const Frame &frame, bool multiple) const;
+};
 
+struct Tesseract {
+    const std::vector<std::string_view> texts;
+    const std::string lang;
+
+    explicit Tesseract(std::string_view t, std::string_view l = "eng");
+    explicit Tesseract(std::vector<std::string_view> t, std::string_view l = "eng");
     MatchFuncReturn operator()(const Frame &frame, bool multiple) const;
 };
 

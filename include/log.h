@@ -21,4 +21,10 @@ void initLog();
 #define LOG_ERROR(...) spdlog::error(__VA_ARGS__)
 #endif
 
+#define ERROR(msg)                     \
+    {                                  \
+        LOG_ERROR(msg);                \
+        throw std::runtime_error(msg); \
+    }
+
 #endif  // BAASSISTANT_LOG_H

@@ -17,23 +17,22 @@ include_directories(include)
 file(GLOB_RECURSE SOURCES "src/*.cpp" "src/*.mm")
 add_executable(BAAssistant ${SOURCES})
 
-find_package(Boost CONFIG REQUIRED)
-include_directories(${Boost_INCLUDE_DIRS})
-if (Boost_FOUND)
-    # Boost::function is header-only, so no need to link
-endif ()
-
 find_package(spdlog CONFIG REQUIRED)
 include_directories(${spdlog_INCLUDE_DIRS})
 if (spdlog_FOUND)
     target_link_libraries(BAAssistant PRIVATE spdlog::spdlog)
 endif ()
 
-# dynamic
 find_package(OpenCV REQUIRED)
 include_directories(${OpenCV_INCLUDE_DIRS})
 if (OpenCV_FOUND)
     target_link_libraries(BAAssistant PRIVATE ${OpenCV_LIBS})
+endif ()
+
+find_package(tesseract CONFIG REQUIRED)
+include_directories(${tesseract_INCLUDE_DIRS})
+if (tesseract_FOUND)
+    target_link_libraries(BAAssistant PRIVATE Tesseract::libtesseract)
 endif ()
 
 target_link_libraries(BAAssistant

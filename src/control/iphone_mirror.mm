@@ -12,11 +12,6 @@
 
 #include "log.h"
 
-#define ERROR(msg)                     \
-    {                                  \
-        LOG_ERROR(msg);                \
-        throw std::runtime_error(msg); \
-    }
 #define IMG_ERROR_MSG "Failed to get image for iPhone Mirroring"
 
 #define CALC_POINT(point, bounds) \
