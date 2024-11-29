@@ -39,13 +39,13 @@ MatchFuncReturn TemplateMatching::operator()(const Frame &frame,
     return locations;
 }
 
-Tesseract::Tesseract(std::string_view t, std::string_view l)
+OCR::OCR(std::string_view t, std::string_view l)
     : words{t}, lang(l) {}
 
-Tesseract::Tesseract(std::vector<std::string_view> t, std::string_view l)
+OCR::OCR(std::vector<std::string_view> t, std::string_view l)
     : words(std::move(t)), lang(l) {}
 
-MatchFuncReturn Tesseract::operator()(const Baa::Frame &frame,
+MatchFuncReturn OCR::operator()(const Baa::Frame &frame,
                                       bool multiple) const {
     // find text in the frame
     cv::Mat mask;
@@ -65,7 +65,7 @@ MatchFuncReturn Tesseract::operator()(const Baa::Frame &frame,
     auto *api = new tesseract::TessBaseAPI();
     if (api->Init((assets / "tessdata").c_str(), lang.data(),
                   tesseract::OEM_LSTM_ONLY))
-        ERROR("Failed to initialize Tesseract");
+        ERROR("Failed to initialize OCR");
 
 #ifdef DEBUG
     cv::Mat dbg;

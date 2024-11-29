@@ -35,12 +35,12 @@ struct TemplateMatching {
     MatchFuncReturn operator()(const Frame &frame, bool multiple) const;
 };
 
-struct Tesseract {
+struct OCR {
     const std::vector<std::string_view> words;
     const std::string lang;
 
-    explicit Tesseract(std::string_view t, std::string_view l = "eng");
-    explicit Tesseract(std::vector<std::string_view> t, std::string_view l = "eng");
+    explicit OCR(std::string_view t, std::string_view l = "eng");
+    explicit OCR(std::vector<std::string_view> t, std::string_view l = "eng");
     MatchFuncReturn operator()(const Frame &frame, bool multiple) const;
 };
 
