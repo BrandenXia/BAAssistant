@@ -5,9 +5,9 @@
 
 namespace Baa {
 
-std::filesystem::path cwd = std::filesystem::current_path();
+const std::filesystem::path cwd = std::filesystem::current_path();
 
-std::filesystem::path assets = cwd / "../assets";
+const std::filesystem::path assets = cwd / "../assets";
 
 }
 

@@ -7,20 +7,19 @@
 #endif
 
 #include <memory>
-#include <opencv4/opencv2/opencv.hpp>
+#include <opencv4/opencv2/core/mat.hpp>
 
 namespace Baa {
 
 class Frame {
-    using RawImage = cv::Mat;
     using Timestamp = std::chrono::time_point<std::chrono::steady_clock>;
 
 public:
-    std::shared_ptr<RawImage> raw;
+    std::shared_ptr<cv::Mat> raw;
     const Timestamp timestamp;
 
-    Frame(const RawImage &raw, const Timestamp &timestamp);
-    explicit Frame(const RawImage &raw);
+    Frame(const cv::Mat &raw, const Timestamp &timestamp);
+    explicit Frame(const cv::Mat &raw);
     explicit Frame(const CGImageRef &raw);
 };
 
