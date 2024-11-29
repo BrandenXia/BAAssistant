@@ -36,7 +36,7 @@ struct TemplateMatching {
 };
 
 struct Tesseract {
-    const std::vector<std::string_view> texts;
+    const std::vector<std::string_view> words;
     const std::string lang;
 
     explicit Tesseract(std::string_view t, std::string_view l = "eng");

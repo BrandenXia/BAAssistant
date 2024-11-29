@@ -3,9 +3,13 @@
 #include <tesseract/baseapi.h>
 
 #include <opencv4/opencv2/imgproc.hpp>
+#include <ranges>
+#include <vector>
 
 #include "assets.h"
 #include "log.h"
+#include "utils/opencv.h"
+#include "utils/words.h"
 
 constexpr float THRESHOLD = 0.8;
 
@@ -36,45 +40,54 @@ MatchFuncReturn TemplateMatching::operator()(const Frame &frame,
 }
 
 Tesseract::Tesseract(std::string_view t, std::string_view l)
-    : texts{t}, lang(l) {}
+    : words{t}, lang(l) {}
 
 Tesseract::Tesseract(std::vector<std::string_view> t, std::string_view l)
-    : texts(std::move(t)), lang(l) {}
+    : words(std::move(t)), lang(l) {}
 
 MatchFuncReturn Tesseract::operator()(const Baa::Frame &frame,
                                       bool multiple) const {
+    // find text in the frame
+    cv::Mat mask;
+    cv::cvtColor(*frame.raw, mask, cv::COLOR_BGR2GRAY);
+    cv::threshold(mask, mask, 0, 255, cv::THRESH_BINARY | cv::THRESH_OTSU);
+    cv::Mat element = cv::getStructuringElement(cv::MORPH_RECT, cv::Size(3, 3));
+    cv::erode(mask, mask, element);
+    cv::dilate(mask, mask, element);
+    std::vector<std::vector<cv::Point>> contours;
+    cv::findContours(mask, contours, cv::RETR_EXTERNAL,
+                     cv::CHAIN_APPROX_SIMPLE);
+
+    auto img_height = frame.raw->rows;
+    auto img_width = frame.raw->cols;
+    auto rects = Utils::OpenCV::contours2rects(contours, img_width, img_height);
+
     auto *api = new tesseract::TessBaseAPI();
     if (api->Init((assets / "tessdata").c_str(), lang.data(),
                   tesseract::OEM_LSTM_ONLY))
         ERROR("Failed to initialize Tesseract");
 
-    api->SetPageSegMode(tesseract::PSM_AUTO);
-    api->SetImage(frame.raw->data, frame.raw->cols, frame.raw->rows, 3,
-                  static_cast<int>(frame.raw->step));
-    api->Recognize(nullptr);
+#ifdef DEBUG
+    cv::Mat dbg;
+    frame.raw->copyTo(dbg);
+#endif
 
-    auto matched = [this](const auto input) {
-        auto i_sv = std::string_view(input);
-        if (i_sv.empty()) return false;
-
-        return std::ranges::any_of(
-            texts, [i_sv](const auto &text) { return i_sv.contains(text); });
-    };
-
-    auto *ri = api->GetIterator();
     MatchFuncReturn locations;
-    do {
-        const auto *word = ri->GetUTF8Text(tesseract::RIL_WORD);
-        if (word == nullptr) continue;
+    for (const auto &rect : rects) {
+#ifdef DEBUG  // for debugging purposes, draw rectangles
+        cv::rectangle(dbg, rect, cv::Scalar(0, 255, 0), 2);
+#endif
 
-        if (matched(word)) {
-            int x, y, w, h;
-            ri->BoundingBox(tesseract::RIL_WORD, &x, &y, &w, &h);
-            locations.emplace_back(x, y);
-        }
+        cv::Mat roi = (*frame.raw)(rect);
+        Utils::OpenCV::binarize(roi);
+        api->SetImage(roi.data, roi.cols, roi.rows, 3,
+                      static_cast<int>(roi.step));
+        api->Recognize(nullptr);
 
-        delete[] word;
-    } while (ri->Next(tesseract::RIL_WORD));
+        const auto text = api->GetUTF8Text();
+        if (Utils::match_words(text, words)) locations.emplace_back(rect.tl());
+        delete[] text;
+    }
 
     api->End();
     delete api;
