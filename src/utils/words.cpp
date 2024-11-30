@@ -1,7 +1,7 @@
 #include "utils/words.h"
 
 #include <algorithm>
-#include <locale>
+#include <cctype>
 #include <ranges>
 #include <rapidfuzz/fuzz.hpp>
 
@@ -9,6 +9,13 @@ namespace views = std::views;
 namespace ranges = std::ranges;
 
 namespace Baa::Utils {
+
+std::string strip(std::string_view text) {
+    auto first = std::find_if_not(text.begin(), text.end(), ::isspace);
+    auto last = std::find_if_not(text.rbegin(), text.rend(), ::isspace).base();
+
+    return {first, last};
+}
 
 bool match_word(std::string_view text, std::string_view word) {
     if (text.empty() || word.empty()) return false;

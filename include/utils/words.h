@@ -6,6 +6,8 @@
 
 namespace Baa::Utils {
 
+std::string strip(std::string_view text);
+
 bool match_word(std::string_view text, std::string_view word);
 
 bool match_words(std::string_view text, const std::vector<std::string_view>& words);
