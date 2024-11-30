@@ -3,3 +3,6 @@
 
 # Editor
 .idea
+
+# Filesytem
+.DS_Store
