@@ -6,7 +6,9 @@
 
 namespace Baa::Utils {
 
-bool match_words(const char *text, std::vector<std::string_view> words);
+bool match_word(std::string_view text, std::string_view word);
+
+bool match_words(std::string_view text, const std::vector<std::string_view>& words);
 
 }
 

@@ -6,7 +6,7 @@
 
 namespace Baa::Utils::OpenCV {
 
-void binarize(cv::Mat &image);
+void binarize(cv::Mat &src, cv::Mat &dst);
 
 std::vector<cv::Rect> mergeRects(std::vector<cv::Rect> boxes, int merge_margin);
 
