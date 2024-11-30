@@ -32,10 +32,6 @@ target_link_libraries(BAAssistant PRIVATE Tesseract::libtesseract)
 find_package(rapidfuzz REQUIRED)
 target_link_libraries(BAAssistant PRIVATE rapidfuzz::rapidfuzz)
 
-find_package(wxWidgets CONFIG REQUIRED)
-include_directories(${wxWidgets_INCLUDE_DIRS})
-target_link_libraries(BAAssistant PRIVATE ${wxWidgets_LIBRARIES})
-
 target_link_libraries(BAAssistant
         PRIVATE
         "-framework Foundation"

@@ -46,9 +46,7 @@ std::vector<cv::Rect> mergeRects(std::vector<cv::Rect> boxes,
                 overlaps.push_back(curr);
 
                 cv::Rect merged = overlaps[0];
-                for (const auto &rect : overlaps) {
-                    merged |= rect;
-                }
+                for (const auto &rect : overlaps) merged |= rect;
 
                 for (auto it = boxes.begin(); it != boxes.end();) {
                     if (std::find(overlaps.begin(), overlaps.end(), *it) !=
