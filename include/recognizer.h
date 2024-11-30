@@ -50,9 +50,9 @@ concept RecognizerEnum = EnumClass<T> && requires {
 template<RecognizerEnum T>
 T recognize(Frame &frame) {
     auto steps = Recognizer<T>::steps();
-    auto it = std::ranges::find_if(
+    auto it = std::ranges::find_if_not(
         steps, [&](const auto &step) { return step(frame).empty(); });
-    return it->condition;
+    return it != steps.end() ? it->condition : steps.back().condition;
 }
 
 }

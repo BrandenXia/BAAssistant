@@ -12,6 +12,7 @@ namespace BA = Games::BlueArchive;
 std::vector<Step<BA::Location>> const& Recognizer<BA::Location>::steps() {
     static const std::vector<Step<BA::Location>> steps = {
         Step{BA::Location::Start, OCR{"TOUCH TO START"}},
+        Step{BA::Location::Lobby, OCR{"HOME"}},
     };
 
     return steps;

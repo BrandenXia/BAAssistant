@@ -1,6 +1,7 @@
 #include "utils/opencv.h"
 
 #include <opencv4/opencv2/imgproc.hpp>
+#include <opencv4/opencv2/photo.hpp>
 #include <ranges>
 
 namespace views = std::views;
@@ -13,9 +14,11 @@ std::vector<cv::Rect> getAllOverlaps(const std::vector<cv::Rect> &boxes,
 
 namespace Baa::Utils::OpenCV {
 
-void binarize(cv::Mat &image) {
-    cv::cvtColor(image, image, cv::COLOR_BGR2GRAY);
-    cv::adaptiveThreshold(image, image, 255, cv::ADAPTIVE_THRESH_GAUSSIAN_C,
+void binarize(cv::Mat &src, cv::Mat &dst) {
+    cv::cvtColor(src, dst, cv::COLOR_BGR2GRAY);
+    cv::normalize(dst, dst, 0, 255, cv::NORM_MINMAX);
+    cv::fastNlMeansDenoising(dst, dst, 3, 7, 21);
+    cv::adaptiveThreshold(dst, dst, 255, cv::ADAPTIVE_THRESH_GAUSSIAN_C,
                           cv::THRESH_BINARY, 11, 2);
 }
 
@@ -82,7 +85,7 @@ std::vector<cv::Rect> contours2rects(
     // clang-format on
     auto rects_ = ranges::to<std::vector<cv::Rect>>(rects_view);
 
-    int margin = 20;
+    int margin = 15;
     std::vector<cv::Rect> rects;
     while ((rects = mergeRects(rects_, margin)).size() <= 2 && margin > 0)
         margin -= 2;

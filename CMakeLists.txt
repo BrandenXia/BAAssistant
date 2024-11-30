@@ -35,6 +35,11 @@ if (tesseract_FOUND)
     target_link_libraries(BAAssistant PRIVATE Tesseract::libtesseract)
 endif ()
 
+find_package(rapidfuzz REQUIRED)
+if (rapidfuzz_FOUND)
+    target_link_libraries(BAAssistant PRIVATE rapidfuzz::rapidfuzz)
+endif ()
+
 target_link_libraries(BAAssistant
         PRIVATE
         "-framework Foundation"
