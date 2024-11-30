@@ -16,6 +16,8 @@ constexpr float THRESHOLD = 0.8;
 
 namespace Baa::Recognizer::Methods {
 
+const Base Empty = [](const auto &, auto) { return MatchFuncReturn{}; };
+
 MatchFuncReturn TemplateMatching::operator()(const Frame &frame,
                                              bool multiple) const {
     cv::Mat grayFrame;

@@ -18,6 +18,10 @@ using MatchFuncReturn = std::vector<cv::Point>;
 
 using Base = std::function<MatchFuncReturn(const Frame &, bool)>;
 
+// placeholder for empty recognizer, used to skip a recognizer or at the end of
+// a recognizer chain
+extern const Base Empty;
+
 // templateImage should be in grayscale
 struct TemplateMatching {
     const cv::Mat templateImage;

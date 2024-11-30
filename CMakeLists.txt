@@ -19,26 +19,22 @@ add_executable(BAAssistant ${SOURCES})
 
 find_package(spdlog CONFIG REQUIRED)
 include_directories(${spdlog_INCLUDE_DIRS})
-if (spdlog_FOUND)
-    target_link_libraries(BAAssistant PRIVATE spdlog::spdlog)
-endif ()
+target_link_libraries(BAAssistant PRIVATE spdlog::spdlog)
 
 find_package(OpenCV REQUIRED)
 include_directories(${OpenCV_INCLUDE_DIRS})
-if (OpenCV_FOUND)
-    target_link_libraries(BAAssistant PRIVATE ${OpenCV_LIBS})
-endif ()
+target_link_libraries(BAAssistant PRIVATE ${OpenCV_LIBS})
 
 find_package(tesseract CONFIG REQUIRED)
 include_directories(${tesseract_INCLUDE_DIRS})
-if (tesseract_FOUND)
-    target_link_libraries(BAAssistant PRIVATE Tesseract::libtesseract)
-endif ()
+target_link_libraries(BAAssistant PRIVATE Tesseract::libtesseract)
 
 find_package(rapidfuzz REQUIRED)
-if (rapidfuzz_FOUND)
-    target_link_libraries(BAAssistant PRIVATE rapidfuzz::rapidfuzz)
-endif ()
+target_link_libraries(BAAssistant PRIVATE rapidfuzz::rapidfuzz)
+
+find_package(wxWidgets CONFIG REQUIRED)
+include_directories(${wxWidgets_INCLUDE_DIRS})
+target_link_libraries(BAAssistant PRIVATE ${wxWidgets_LIBRARIES})
 
 target_link_libraries(BAAssistant
         PRIVATE
