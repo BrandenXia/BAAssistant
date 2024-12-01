@@ -14,7 +14,7 @@ std::vector<cv::Rect> getAllOverlaps(const std::vector<cv::Rect> &boxes,
 
 namespace Baa::Utils::OpenCV {
 
-void binarize(cv::Mat &src, cv::Mat &dst) {
+void binarize(const cv::Mat &src, cv::Mat &dst) {
     cv::cvtColor(src, dst, cv::COLOR_BGR2GRAY);
     cv::normalize(dst, dst, 0, 255, cv::NORM_MINMAX);
     cv::fastNlMeansDenoising(dst, dst, 3, 7, 21);
@@ -73,7 +73,7 @@ std::vector<cv::Rect> contours2rects(
     bool img_horizontal = width > height;
     auto size_filter = [&](const auto &rect) {
         // TODO: I can only think of this for now, add more rules if needed
-        return rect.height < width * 0.4;
+        return contours.size() <= 2 | rect.height < height * 0.4;
     };
 
     // clang-format off

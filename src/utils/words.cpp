@@ -5,6 +5,8 @@
 #include <ranges>
 #include <rapidfuzz/fuzz.hpp>
 
+#define FUZZ_THRESHOLD 90
+
 namespace views = std::views;
 namespace ranges = std::ranges;
 
@@ -23,7 +25,8 @@ bool match_word(std::string_view text, std::string_view word) {
     auto text_lower = text | views::transform(::tolower);
     auto word_lower = word | views::transform(::tolower);
 
-    return rapidfuzz::fuzz::partial_ratio(text_lower, word_lower) > 90;
+    return rapidfuzz::fuzz::partial_ratio(text_lower, word_lower) >=
+           FUZZ_THRESHOLD;
 }
 
 bool match_words(std::string_view text,

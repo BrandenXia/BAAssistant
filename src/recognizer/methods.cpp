@@ -53,10 +53,16 @@ OCR::OCR(std::vector<std::string_view> t, std::string_view l)
 MatchFuncReturn OCR::operator()(const Baa::Frame &frame, bool multiple) const {
     LOG_INFO("Running OCR recognizer");
 
-    // find text in the frame
+#ifdef DEBUG
+    cv::Mat dbg;
+    frame.raw->copyTo(dbg);
+#endif
+
+    // find edges
     cv::Mat mask;
     cv::cvtColor(*frame.raw, mask, cv::COLOR_BGR2GRAY);
     cv::fastNlMeansDenoising(mask, mask, 3, 7, 21);
+    // TODO: this doesn't work well when image is too bright
     cv::threshold(mask, mask, 0, 255, cv::THRESH_BINARY | cv::THRESH_OTSU);
     cv::Mat element = cv::getStructuringElement(cv::MORPH_RECT, cv::Size(3, 3));
     cv::erode(mask, mask, element);
@@ -65,6 +71,10 @@ MatchFuncReturn OCR::operator()(const Baa::Frame &frame, bool multiple) const {
     std::vector<std::vector<cv::Point>> contours;
     cv::findContours(mask, contours, cv::RETR_EXTERNAL,
                      cv::CHAIN_APPROX_SIMPLE);
+
+#ifdef DEBUG
+    cv::drawContours(dbg, contours, -1, cv::Scalar(255, 0, 0), 2);
+#endif
 
     LOG_DEBUG("{} contours that may contain text found", contours.size());
 
@@ -79,11 +89,6 @@ MatchFuncReturn OCR::operator()(const Baa::Frame &frame, bool multiple) const {
     if (api->Init((assets / "tessdata").c_str(), lang.data(),
                   tesseract::OEM_LSTM_ONLY))
         ERROR("Failed to initialize OCR");
-
-#ifdef DEBUG
-    cv::Mat dbg;
-    frame.raw->copyTo(dbg);
-#endif
 
     MatchFuncReturn locations;
 
